@@ -1,313 +1,346 @@
-{
-  "meta": {
-    "lastTouchedVersion": "2026.2.23",
-    "lastTouchedAt": "2026-03-05T19:04:13.997Z"
-  },
-  "update": {
-    "channel": "stable",
-    "checkOnStart": false
-  },
-  "browser": {
-    "headless": true,
-    "noSandbox": true,
-    "defaultProfile": "openclaw"
-  },
-  "models": {
-    "mode": "merge",
-    "providers": {
-      "nexos": {
-        "baseUrl": "https://api.nexos.ai/v1",
-        "apiKey": "nexos-team-5097daf693b82b146292cb9e07a18fae279aebf5422adc0e759e88d0f2dd0af5f492520ac6dde0f286b441165714b96a729ce9fd571b208be8bf13b4031a9418",
-        "api": "openai-completions",
-        "auth": "api-key",
-        "models": [
-          {
-            "id": "e97d6d17-520b-451c-b92d-fddca2a5bef9",
-            "name": "Nexos Gpt 4 1",
-            "reasoning": true,
-            "input": [
-              "text",
-              "image"
-            ],
-            "cost": {
-              "input": 0,
-              "output": 0,
-              "cacheRead": 0,
-              "cacheWrite": 0
-            },
-            "maxTokens": 8192,
-            "contextWindow": 200000,
-            "compat": {
-              "supportsStore": true,
-              "supportsDeveloperRole": true,
-              "supportsReasoningEffort": false
-            }
-          },
-          {
-            "id": "7c74b906-391c-4d86-bf34-338c1cc2f290",
-            "name": "Nexos Gpt 5 2",
-            "reasoning": true,
-            "input": [
-              "text",
-              "image"
-            ],
-            "cost": {
-              "input": 0,
-              "output": 0,
-              "cacheRead": 0,
-              "cacheWrite": 0
-            },
-            "maxTokens": 8192,
-            "contextWindow": 200000,
-            "compat": {
-              "supportsStore": true,
-              "supportsDeveloperRole": true,
-              "supportsReasoningEffort": false
-            }
-          },
-          {
-            "id": "69f2b465-a0b9-4ad4-84b2-54d5c8f3ee6e",
-            "name": "Nexos Gemini 3 Flash Preview",
-            "reasoning": true,
-            "input": [
-              "text",
-              "image"
-            ],
-            "cost": {
-              "input": 0,
-              "output": 0,
-              "cacheRead": 0,
-              "cacheWrite": 0
-            },
-            "maxTokens": 8192,
-            "contextWindow": 200000,
-            "compat": {
-              "supportsStore": true,
-              "supportsDeveloperRole": true,
-              "supportsReasoningEffort": false
-            }
-          },
-          {
-            "id": "6efe27dd-7462-4671-9ca7-063e60e4b8dd",
-            "name": "Nexos Anthropic Claude Opus 4 6 @ Default",
-            "reasoning": true,
-            "input": [
-              "text",
-              "image"
-            ],
-            "cost": {
-              "input": 0,
-              "output": 0,
-              "cacheRead": 0,
-              "cacheWrite": 0
-            },
-            "maxTokens": 8192,
-            "contextWindow": 200000,
-            "compat": {
-              "supportsStore": true,
-              "supportsDeveloperRole": true,
-              "supportsReasoningEffort": false
-            }
-          },
-          {
-            "id": "34f07a0d-475a-481f-adf8-1307a6e770c9",
-            "name": "Nexos Anthropic Claude Sonnet 4 5 @ 20250929",
-            "reasoning": true,
-            "input": [
-              "text",
-              "image"
-            ],
-            "cost": {
-              "input": 0,
-              "output": 0,
-              "cacheRead": 0,
-              "cacheWrite": 0
-            },
-            "maxTokens": 8192,
-            "contextWindow": 200000,
-            "compat": {
-              "supportsStore": true,
-              "supportsDeveloperRole": true,
-              "supportsReasoningEffort": false
-            }
-          },
-          {
-            "id": "61f107dc-4836-4327-a19a-8ec966e5e171",
-            "name": "Nexos Claude Opus 4 20250514",
-            "reasoning": true,
-            "input": [
-              "text",
-              "image"
-            ],
-            "cost": {
-              "input": 0,
-              "output": 0,
-              "cacheRead": 0,
-              "cacheWrite": 0
-            },
-            "maxTokens": 8192,
-            "contextWindow": 200000,
-            "compat": {
-              "supportsStore": true,
-              "supportsDeveloperRole": true,
-              "supportsReasoningEffort": false
-            }
-          },
-          {
-            "id": "31f61b6f-76db-43f7-a133-444563af2d5f",
-            "name": "Nexos Grok 4 0709",
-            "reasoning": true,
-            "input": [
-              "text",
-              "image"
-            ],
-            "cost": {
-              "input": 0,
-              "output": 0,
-              "cacheRead": 0,
-              "cacheWrite": 0
-            },
-            "maxTokens": 8192,
-            "contextWindow": 200000,
-            "compat": {
-              "supportsStore": true,
-              "supportsDeveloperRole": true,
-              "supportsReasoningEffort": false
-            }
-          }
-        ]
-      }
-    }
-  },
-  "agents": {
-    "defaults": {
-      "model": {
-        "primary": "Nexos Gpt 4 1"
-      },
-      "models": {
-        "nexos/e97d6d17-520b-451c-b92d-fddca2a5bef9": {
-          "alias": "Nexos Gpt 4 1"
-        },
-        "nexos/7c74b906-391c-4d86-bf34-338c1cc2f290": {
-          "alias": "Nexos Gpt 5 2"
-        },
-        "nexos/69f2b465-a0b9-4ad4-84b2-54d5c8f3ee6e": {
-          "alias": "Nexos Gemini 3 Flash Preview"
-        },
-        "nexos/6efe27dd-7462-4671-9ca7-063e60e4b8dd": {
-          "alias": "Nexos Anthropic Claude Opus 4 6 @ Default"
-        },
-        "nexos/34f07a0d-475a-481f-adf8-1307a6e770c9": {
-          "alias": "Nexos Anthropic Claude Sonnet 4 5 @ 20250929"
-        },
-        "nexos/61f107dc-4836-4327-a19a-8ec966e5e171": {
-          "alias": "Nexos Claude Opus 4 20250514"
-        },
-        "nexos/31f61b6f-76db-43f7-a133-444563af2d5f": {
-          "alias": "Nexos Grok 4 0709"
-        }
-      }
-    },
-    "list": [
-      {
-        "id": "main",
-        "name": "main",
-        "subagents": {
-          "allowAgents": [
-            "kirjutaja"
-          ]
-        }
-      },
-      {
-        "id": "kirjutaja",
-        "name": "Kirjutaja",
-        "workspace": "/data/.openclaw/workspace-kirjutaja",
-        "model": "nexos/6efe27dd-7462-4671-9ca7-063e60e4b8dd"
-      }
-    ]
-  },
-  "tools": {
-    "agentToAgent": {
-      "enabled": true,
-      "allow": [
-        "main",
-        "kirjutaja"
-      ]
-    }
-  },
-  "commands": {
-    "native": "auto",
-    "nativeSkills": "auto",
-    "bash": true,
-    "restart": true,
-    "ownerDisplay": "raw"
-  },
-  "hooks": {
-    "token": "Fn2N2s1ZleTUdTNc0eWEekS2VUbICA9J"
-  },
-  "channels": {
-    "whatsapp": {
-      "enabled": true,
-      "dmPolicy": "allowlist",
-      "selfChatMode": true,
-      "allowFrom": [],
-      "groupAllowFrom": [],
-      "groupPolicy": "allowlist",
-      "debounceMs": 0,
-      "mediaMaxMb": 50
-    },
-    "telegram": {
-      "enabled": true,
-      "dmPolicy": "pairing",
-      "botToken": "8689983835:AAGY4nTju1JhTrzUls1_QPSxt5jWEOh6PHI",
-      "groupPolicy": "allowlist",
-      "streaming": "partial"
-    }
-  },
-  "gateway": {
-    "mode": "local",
-    "controlUi": {
-      "dangerouslyAllowHostHeaderOriginFallback": true,
-      "allowInsecureAuth": true,
-      "dangerouslyDisableDeviceAuth": true
-    },
-    "auth": {
-      "mode": "token",
-      "token": "Fn2N2s1ZleTUdTNc0eWEekS2VUbICA9J"
-    },
-    "trustedProxies": [
-      "127.0.0.1/32"
-    ],
-    "remote": {
-      "token": "Fn2N2s1ZleTUdTNc0eWEekS2VUbICA9J"
-    }
-  },
-  "plugins": {
-    "entries": {
-      "whatsapp": {
-        "enabled": true
-      },
-      "discord": {
-        "enabled": true
-      },
-      "imessage": {
-        "enabled": false
-      },
-      "telegram": {
-        "enabled": true
-      },
-      "slack": {
-        "enabled": true
-      },
-      "nostr": {
-        "enabled": true
-      },
-      "signal": {
-        "enabled": false
-      },
-      "googlechat": {
-        "enabled": true
-      }
-    }
-  }
+﻿{
+    "meta":  {
+                 "lastTouchedVersion":  "2026.2.23",
+                 "lastTouchedAt":  "2026-03-05T19:04:13.997Z"
+             },
+    "update":  {
+                   "channel":  "stable",
+                   "checkOnStart":  false
+               },
+    "browser":  {
+                    "headless":  true,
+                    "noSandbox":  true,
+                    "defaultProfile":  "openclaw"
+                },
+    "models":  {
+                   "mode":  "merge",
+                   "providers":  {
+                                     "nexos":  {
+                                                   "baseUrl":  "https://api.nexos.ai/v1",
+                                                   "apiKey":  "nexos-team-5097daf693b82b146292cb9e07a18fae279aebf5422adc0e759e88d0f2dd0af5f492520ac6dde0f286b441165714b96a729ce9fd571b208be8bf13b4031a9418",
+                                                   "api":  "openai-completions",
+                                                   "auth":  "api-key",
+                                                   "models":  [
+                                                                  {
+                                                                      "id":  "e97d6d17-520b-451c-b92d-fddca2a5bef9",
+                                                                      "name":  "Nexos Gpt 4 1",
+                                                                      "reasoning":  true,
+                                                                      "input":  [
+                                                                                    "text",
+                                                                                    "image"
+                                                                                ],
+                                                                      "cost":  {
+                                                                                   "input":  0,
+                                                                                   "output":  0,
+                                                                                   "cacheRead":  0,
+                                                                                   "cacheWrite":  0
+                                                                               },
+                                                                      "maxTokens":  8192,
+                                                                      "contextWindow":  200000,
+                                                                      "compat":  {
+                                                                                     "supportsStore":  true,
+                                                                                     "supportsDeveloperRole":  true,
+                                                                                     "supportsReasoningEffort":  false
+                                                                                 }
+                                                                  },
+                                                                  {
+                                                                      "id":  "7c74b906-391c-4d86-bf34-338c1cc2f290",
+                                                                      "name":  "Nexos Gpt 5 2",
+                                                                      "reasoning":  true,
+                                                                      "input":  [
+                                                                                    "text",
+                                                                                    "image"
+                                                                                ],
+                                                                      "cost":  {
+                                                                                   "input":  0,
+                                                                                   "output":  0,
+                                                                                   "cacheRead":  0,
+                                                                                   "cacheWrite":  0
+                                                                               },
+                                                                      "maxTokens":  8192,
+                                                                      "contextWindow":  200000,
+                                                                      "compat":  {
+                                                                                     "supportsStore":  true,
+                                                                                     "supportsDeveloperRole":  true,
+                                                                                     "supportsReasoningEffort":  false
+                                                                                 }
+                                                                  },
+                                                                  {
+                                                                      "id":  "69f2b465-a0b9-4ad4-84b2-54d5c8f3ee6e",
+                                                                      "name":  "Nexos Gemini 3 Flash Preview",
+                                                                      "reasoning":  true,
+                                                                      "input":  [
+                                                                                    "text",
+                                                                                    "image"
+                                                                                ],
+                                                                      "cost":  {
+                                                                                   "input":  0,
+                                                                                   "output":  0,
+                                                                                   "cacheRead":  0,
+                                                                                   "cacheWrite":  0
+                                                                               },
+                                                                      "maxTokens":  8192,
+                                                                      "contextWindow":  200000,
+                                                                      "compat":  {
+                                                                                     "supportsStore":  true,
+                                                                                     "supportsDeveloperRole":  true,
+                                                                                     "supportsReasoningEffort":  false
+                                                                                 }
+                                                                  },
+                                                                  {
+                                                                      "id":  "6efe27dd-7462-4671-9ca7-063e60e4b8dd",
+                                                                      "name":  "Nexos Anthropic Claude Opus 4 6 @ Default",
+                                                                      "reasoning":  true,
+                                                                      "input":  [
+                                                                                    "text",
+                                                                                    "image"
+                                                                                ],
+                                                                      "cost":  {
+                                                                                   "input":  0,
+                                                                                   "output":  0,
+                                                                                   "cacheRead":  0,
+                                                                                   "cacheWrite":  0
+                                                                               },
+                                                                      "maxTokens":  8192,
+                                                                      "contextWindow":  200000,
+                                                                      "compat":  {
+                                                                                     "supportsStore":  true,
+                                                                                     "supportsDeveloperRole":  true,
+                                                                                     "supportsReasoningEffort":  false
+                                                                                 }
+                                                                  },
+                                                                  {
+                                                                      "id":  "34f07a0d-475a-481f-adf8-1307a6e770c9",
+                                                                      "name":  "Nexos Anthropic Claude Sonnet 4 5 @ 20250929",
+                                                                      "reasoning":  true,
+                                                                      "input":  [
+                                                                                    "text",
+                                                                                    "image"
+                                                                                ],
+                                                                      "cost":  {
+                                                                                   "input":  0,
+                                                                                   "output":  0,
+                                                                                   "cacheRead":  0,
+                                                                                   "cacheWrite":  0
+                                                                               },
+                                                                      "maxTokens":  8192,
+                                                                      "contextWindow":  200000,
+                                                                      "compat":  {
+                                                                                     "supportsStore":  true,
+                                                                                     "supportsDeveloperRole":  true,
+                                                                                     "supportsReasoningEffort":  false
+                                                                                 }
+                                                                  },
+                                                                  {
+                                                                      "id":  "61f107dc-4836-4327-a19a-8ec966e5e171",
+                                                                      "name":  "Nexos Claude Opus 4 20250514",
+                                                                      "reasoning":  true,
+                                                                      "input":  [
+                                                                                    "text",
+                                                                                    "image"
+                                                                                ],
+                                                                      "cost":  {
+                                                                                   "input":  0,
+                                                                                   "output":  0,
+                                                                                   "cacheRead":  0,
+                                                                                   "cacheWrite":  0
+                                                                               },
+                                                                      "maxTokens":  8192,
+                                                                      "contextWindow":  200000,
+                                                                      "compat":  {
+                                                                                     "supportsStore":  true,
+                                                                                     "supportsDeveloperRole":  true,
+                                                                                     "supportsReasoningEffort":  false
+                                                                                 }
+                                                                  },
+                                                                  {
+                                                                      "id":  "31f61b6f-76db-43f7-a133-444563af2d5f",
+                                                                      "name":  "Nexos Grok 4 0709",
+                                                                      "reasoning":  true,
+                                                                      "input":  [
+                                                                                    "text",
+                                                                                    "image"
+                                                                                ],
+                                                                      "cost":  {
+                                                                                   "input":  0,
+                                                                                   "output":  0,
+                                                                                   "cacheRead":  0,
+                                                                                   "cacheWrite":  0
+                                                                               },
+                                                                      "maxTokens":  8192,
+                                                                      "contextWindow":  200000,
+                                                                      "compat":  {
+                                                                                     "supportsStore":  true,
+                                                                                     "supportsDeveloperRole":  true,
+                                                                                     "supportsReasoningEffort":  false
+                                                                                 }
+                                                                  }
+                                                              ]
+                                               }
+                                 }
+               },
+    "agents":  {
+                   "defaults":  {
+                                    "model":  {
+                                                  "primary":  "Nexos Gpt 4 1"
+                                              },
+                                    "models":  {
+                                                   "nexos/e97d6d17-520b-451c-b92d-fddca2a5bef9":  {
+                                                                                                      "alias":  "Nexos Gpt 4 1"
+                                                                                                  },
+                                                   "nexos/7c74b906-391c-4d86-bf34-338c1cc2f290":  {
+                                                                                                      "alias":  "Nexos Gpt 5 2"
+                                                                                                  },
+                                                   "nexos/69f2b465-a0b9-4ad4-84b2-54d5c8f3ee6e":  {
+                                                                                                      "alias":  "Nexos Gemini 3 Flash Preview"
+                                                                                                  },
+                                                   "nexos/6efe27dd-7462-4671-9ca7-063e60e4b8dd":  {
+                                                                                                      "alias":  "Nexos Anthropic Claude Opus 4 6 @ Default"
+                                                                                                  },
+                                                   "nexos/34f07a0d-475a-481f-adf8-1307a6e770c9":  {
+                                                                                                      "alias":  "Nexos Anthropic Claude Sonnet 4 5 @ 20250929"
+                                                                                                  },
+                                                   "nexos/61f107dc-4836-4327-a19a-8ec966e5e171":  {
+                                                                                                      "alias":  "Nexos Claude Opus 4 20250514"
+                                                                                                  },
+                                                   "nexos/31f61b6f-76db-43f7-a133-444563af2d5f":  {
+                                                                                                      "alias":  "Nexos Grok 4 0709"
+                                                                                                  }
+                                               }
+                                },
+                   "list":  [
+                                {
+                                    "id":  "main",
+                                    "name":  "main",
+                                    "subagents":  {
+                                                      "allowAgents":  [
+                                                                          "kirjutaja",
+                                                                          "postiluure",
+                                                                          "täiendaja",
+                                                                          "toimetaja",
+                                                                          "veebivalvur"
+                                                                      ]
+                                                  }
+                                },
+                                {
+                                    "id":  "kirjutaja",
+                                    "name":  "Kirjutaja",
+                                    "workspace":  "/data/.openclaw/workspace-kirjutaja",
+                                    "model":  "nexos/6efe27dd-7462-4671-9ca7-063e60e4b8dd"
+                                },
+                                {
+                                    "id":  "postiluure",
+                                    "name":  "Postiluure",
+                                    "workspace":  "/data/.openclaw/workspace-postiluure"
+                                },
+                                {
+                                    "id":  "täiendaja",
+                                    "name":  "Täiendaja",
+                                    "workspace":  "/data/.openclaw/workspace-täiendaja"
+                                },
+                                {
+                                    "id":  "toimetaja",
+                                    "name":  "Toimetaja",
+                                    "workspace":  "/data/.openclaw/workspace-toimetaja"
+                                },
+                                {
+                                    "id":  "veebivalvur",
+                                    "name":  "Veebivalvur",
+                                    "workspace":  "/data/.openclaw/workspace-veebivalvur"
+                                }
+                            ]
+               },
+    "tools":  {
+                  "agentToAgent":  {
+                                       "enabled":  true,
+                                       "allow":  [
+                                                     "main",
+                                                     "kirjutaja",
+                                                     "postiluure",
+                                                     "täiendaja",
+                                                     "toimetaja",
+                                                     "veebivalvur"
+                                                 ]
+                                   }
+              },
+    "commands":  {
+                     "native":  "auto",
+                     "nativeSkills":  "auto",
+                     "bash":  true,
+                     "restart":  true,
+                     "ownerDisplay":  "raw"
+                 },
+    "hooks":  {
+                  "token":  "Fn2N2s1ZleTUdTNc0eWEekS2VUbICA9J"
+              },
+    "channels":  {
+                     "whatsapp":  {
+                                      "enabled":  true,
+                                      "dmPolicy":  "allowlist",
+                                      "selfChatMode":  true,
+                                      "allowFrom":  [
+
+                                                    ],
+                                      "groupAllowFrom":  [
+
+                                                         ],
+                                      "groupPolicy":  "allowlist",
+                                      "debounceMs":  0,
+                                      "mediaMaxMb":  50
+                                  },
+                     "telegram":  {
+                                      "enabled":  true,
+                                      "dmPolicy":  "pairing",
+                                      "botToken":  "8689983835:AAGY4nTju1JhTrzUls1_QPSxt5jWEOh6PHI",
+                                      "groupPolicy":  "allowlist",
+                                      "streaming":  "partial"
+                                  }
+                 },
+    "gateway":  {
+                    "mode":  "local",
+                    "controlUi":  {
+                                      "dangerouslyAllowHostHeaderOriginFallback":  true,
+                                      "allowInsecureAuth":  true,
+                                      "dangerouslyDisableDeviceAuth":  true
+                                  },
+                    "auth":  {
+                                 "mode":  "token",
+                                 "token":  "Fn2N2s1ZleTUdTNc0eWEekS2VUbICA9J"
+                             },
+                    "trustedProxies":  [
+                                           "127.0.0.1/32"
+                                       ],
+                    "remote":  {
+                                   "token":  "Fn2N2s1ZleTUdTNc0eWEekS2VUbICA9J"
+                               }
+                },
+    "plugins":  {
+                    "entries":  {
+                                    "whatsapp":  {
+                                                     "enabled":  true
+                                                 },
+                                    "discord":  {
+                                                    "enabled":  true
+                                                },
+                                    "imessage":  {
+                                                     "enabled":  false
+                                                 },
+                                    "telegram":  {
+                                                     "enabled":  true
+                                                 },
+                                    "slack":  {
+                                                  "enabled":  true
+                                              },
+                                    "nostr":  {
+                                                  "enabled":  true
+                                              },
+                                    "signal":  {
+                                                   "enabled":  false
+                                               },
+                                    "googlechat":  {
+                                                       "enabled":  true
+                                                   }
+                                }
+                }
 }
+
