@@ -1,0 +1,71 @@
+﻿{
+    "version":  1,
+    "jobs":  [
+                 {
+                     "id":  "ce117b0b-961e-4eab-b687-a605f063c119",
+                     "name":  "Postkasti kontroll hommik",
+                     "enabled":  true,
+                     "createdAtMs":  1772269350563,
+                     "updatedAtMs":  1772737957146,
+                     "schedule":  {
+                                      "kind":  "cron",
+                                      "expr":  "0 8 * * *",
+                                      "tz":  "Europe/Tallinn"
+                                  },
+                     "sessionTarget":  "isolated",
+                     "wakeMode":  "now",
+                     "payload":  {
+                                     "kind":  "agentTurn",
+                                     "message":  "Käivita KOHE bash käsk:\nexport GOG_KEYRING_PASSWORD=\u0027peatoimetaja2026\u0027 \u0026\u0026 /data/bin/gog gmail messages search \u0027is:unread in:inbox\u0027\n\nKui tühi: vasta \"Postkast tühi.\"\n\nKui kirju on:\n1. Töötle kirjad threadId kaupa (iga threadId ainult üks kord).\n2. Tee esmane uudisväärtuse hinnang 1-10 ainult metadata põhjal (from/subject/snippet), ilma keha lugemata.\n3. Kui esmane hinne on \u003e=6, too täiskeha alles siis:\n   export GOG_KEYRING_PASSWORD=\u0027peatoimetaja2026\u0027 \u0026\u0026 /data/bin/gog gmail get \u003cmessageId\u003e --format full\n   Seejärel kinnita lõpphinne 1-10.\n4. Märgi KOHE töödeldud thread loetuks (sõltumata hindest):\n   export GOG_KEYRING_PASSWORD=\u0027peatoimetaja2026\u0027 \u0026\u0026 /data/bin/gog gmail labels modify \u003cthreadId\u003e --remove UNREAD\n5. Kui lõpphinne on \u003e=6, spawni sessions_spawn: agentId=kirjutaja, task=\"Kirjuta uudislugu Gmail kirjast ID: \u003cmessageId\u003e\"\n\nKirjuta lõpus kokkuvõte hinnangutest."
+                                 },
+                     "delivery":  {
+                                      "mode":  "announce",
+                                      "channel":  "telegram",
+                                      "to":  "telegram:5263193787"
+                                  },
+                     "state":  {
+                                   "nextRunAtMs":  1772776800000,
+                                   "lastRunAtMs":  1772737895223,
+                                   "lastRunStatus":  "ok",
+                                   "lastStatus":  "ok",
+                                   "lastDurationMs":  61923,
+                                   "lastDeliveryStatus":  "delivered",
+                                   "consecutiveErrors":  0,
+                                   "lastDelivered":  true
+                               }
+                 },
+                 {
+                     "id":  "9fa17787-e893-4a51-adb6-5fcc774f2ce3",
+                     "name":  "Postkasti kontroll Ćµhtu",
+                     "enabled":  true,
+                     "createdAtMs":  1772269388929,
+                     "updatedAtMs":  1772722810160,
+                     "schedule":  {
+                                      "kind":  "cron",
+                                      "expr":  "0 17 * * *",
+                                      "tz":  "Europe/Tallinn"
+                                  },
+                     "sessionTarget":  "isolated",
+                     "wakeMode":  "now",
+                     "payload":  {
+                                     "kind":  "agentTurn",
+                                     "message":  "Käivita KOHE bash käsk:\nexport GOG_KEYRING_PASSWORD=\u0027peatoimetaja2026\u0027 \u0026\u0026 /data/bin/gog gmail messages search \u0027is:unread in:inbox\u0027\n\nKui tühi: vasta \"Postkast tühi.\"\n\nKui kirju on:\n1. Töötle kirjad threadId kaupa (iga threadId ainult üks kord).\n2. Tee esmane uudisväärtuse hinnang 1-10 ainult metadata põhjal (from/subject/snippet), ilma keha lugemata.\n3. Kui esmane hinne on \u003e=6, too täiskeha alles siis:\n   export GOG_KEYRING_PASSWORD=\u0027peatoimetaja2026\u0027 \u0026\u0026 /data/bin/gog gmail get \u003cmessageId\u003e --format full\n   Seejärel kinnita lõpphinne 1-10.\n4. Märgi KOHE töödeldud thread loetuks (sõltumata hindest):\n   export GOG_KEYRING_PASSWORD=\u0027peatoimetaja2026\u0027 \u0026\u0026 /data/bin/gog gmail labels modify \u003cthreadId\u003e --remove UNREAD\n5. Kui lõpphinne on \u003e=6, spawni sessions_spawn: agentId=kirjutaja, task=\"Kirjuta uudislugu Gmail kirjast ID: \u003cmessageId\u003e\"\n\nKirjuta lõpus kokkuvõte hinnangutest."
+                                 },
+                     "delivery":  {
+                                      "mode":  "announce",
+                                      "channel":  "telegram",
+                                      "to":  "telegram:5263193787"
+                                  },
+                     "state":  {
+                                   "nextRunAtMs":  1772809200000,
+                                   "lastRunAtMs":  1772722800007,
+                                   "lastRunStatus":  "ok",
+                                   "lastStatus":  "ok",
+                                   "lastDurationMs":  10153,
+                                   "lastDeliveryStatus":  "not-delivered",
+                                   "consecutiveErrors":  0,
+                                   "lastDelivered":  false
+                               }
+                 }
+             ]
+}
