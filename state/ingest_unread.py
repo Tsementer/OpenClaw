@@ -4,6 +4,7 @@ import os, sys, subprocess, json, time
 GOG="/data/bin/gog"
 LEDGER="/data/.openclaw/state/ledger.jsonl"
 QUERY="is:unread in:inbox"
+MAX_FIELD_LEN=500
 
 def run(cmd):
     env=os.environ.copy()
@@ -56,6 +57,13 @@ def append_event(ev):
     with open(LEDGER,"a",encoding="utf-8") as f:
         f.write(json.dumps(ev, ensure_ascii=False) + "\n")
 
+def sanitize_field(value):
+    if value is None:
+        return ""
+    clean=value.replace("\r"," ").replace("\n"," ").replace("\t"," ")
+    clean="".join(ch for ch in clean if ch.isprintable())
+    return clean.strip()[:MAX_FIELD_LEN]
+
 def main():
     r=run([GOG,"gmail","messages","search",QUERY,"--plain"])
     if r.returncode != 0:
@@ -73,6 +81,14 @@ def main():
 
     new_items=[]
     for thread_id,msg_id,date,from_,subject in rows:
+        thread_id=sanitize_field(thread_id)
+        msg_id=sanitize_field(msg_id)
+        date=sanitize_field(date)
+        from_=sanitize_field(from_)
+        subject=sanitize_field(subject)
+        if not thread_id or not msg_id:
+            continue
+
         prev=latest.get(thread_id)
         if prev and prev.get("status") in done:
             continue

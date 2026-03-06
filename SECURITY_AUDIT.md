@@ -2,33 +2,42 @@
 
 ## Key risks identified
 
-1. **Hardcoded authentication token in repository** (`openclaw.json`)
-   - `gateway.auth.token` and `gateway.remote.token` are set to a concrete secret value in versioned config.
-   - If this repository is shared, anyone with read access can impersonate a trusted client.
+1. **Hardcoded authentication token in repository history** (`openclaw.json` in older commits)
+   - Even if current `openclaw.json` uses placeholders, Git history can still contain sensitive values.
+   - Anyone with access to old commits may recover exposed tokens.
 
-2. **Gateway security explicitly weakened** (`openclaw.json`)
-   - `allowInsecureAuth`, `dangerouslyDisableDeviceAuth`, and host-header fallback are enabled.
-   - Combined with token reuse, this creates a high risk of unauthorized control-plane access.
+2. **Credential handling pattern in scheduled jobs** (`cron/jobs.json`)
+   - Cron prompts previously encouraged assigning `GOG_KEYRING_PASSWORD` inline in command text.
+   - This increases accidental disclosure risk through logs, copy/paste, and command history.
 
-3. **Browser sandbox disabled** (`openclaw.json`)
-   - `browser.noSandbox = true` removes a key containment layer.
-   - Increases blast radius if untrusted web content is rendered.
+3. **Untrusted email metadata flowed into agent task text without sanitization** (`state/ingest_unread.py`)
+   - Subject/from fields are attacker-controlled and could include control characters.
+   - Unsanitized values can break downstream command/task formatting and increase injection risk.
 
-4. **Operational secret present in instructions** (`workspace-kirjutaja/AGENTS.md`, `workspace-postiluure/AGENTS.md`)
-   - The password value for `GOG_KEYRING_PASSWORD` appears directly in committed instruction files.
-   - This is credential leakage and encourages copy/paste secret handling.
+4. **Ledger append endpoint accepted unbounded JSON** (`state/append_ledger.py`)
+   - Unbounded stdin can be abused for memory pressure / oversized writes.
+   - Missing status validation allows malformed event states to pollute durable state.
 
-## Immediate mitigations
+## Mitigations implemented in this patch
 
-- Rotate all exposed tokens/passwords immediately.
-- Move all credentials to environment variables or secret manager (never commit plaintext).
-- Set `gateway.controlUi.allowInsecureAuth=false` and `dangerouslyDisableDeviceAuth=false`.
-- Replace static token values with placeholders and fail fast if unset.
-- Re-enable browser sandbox where feasible.
-- Add secret scanning in CI (e.g., gitleaks/trufflehog) and block commits that include secrets.
+- `cron/jobs.json`
+  - Replaced inline password assignment example with environment-variable presence check (`test -n "$GOG_KEYRING_PASSWORD"`).
+- `state/ingest_unread.py`
+  - Added sanitization and length-limits for `threadId`, `messageId`, `receivedAt`, `from`, and `subject` before persistence/output.
+  - Rejected events with empty critical identifiers after sanitization.
+- `state/append_ledger.py`
+  - Added max stdin size limit.
+  - Added status allowlist validation.
+  - Ensured ledger directory exists and file is created with restrictive `0600` permissions.
+
+## History remediation guidance
+
+- Rotate all previously used tokens/passwords that may have existed in prior commits.
+- If this repository is shared externally, rewrite history with `git filter-repo`/BFG and force-push sanitized history.
+- Revoke old secrets after rewrite (history rewrite alone is not sufficient if secrets were already cloned).
 
 ## Severity summary
 
-- **Critical**: hardcoded gateway tokens + insecure auth/device auth disabled.
-- **High**: plaintext operational password in AGENTS instructions.
-- **Medium**: browser sandbox disabled.
+- **High**: history-exposed secrets (requires rotation, potentially history rewrite).
+- **Medium**: unsanitized metadata in automation pipeline.
+- **Medium**: unbounded ledger append input and weak validation.
