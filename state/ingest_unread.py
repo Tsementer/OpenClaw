@@ -58,8 +58,9 @@ def append_event(ev):
     r=subprocess.run([sys.executable, append_script], input=json.dumps(ev, ensure_ascii=False), text=True, capture_output=True)
     if r.returncode != 0:
         err=(r.stderr or r.stdout).strip()
-        print(f"ERROR: append_ledger failed: {err}", file=sys.stderr)
-        sys.exit(4)
+        print(f"ERROR: append_ledger failed for thread {ev.get('threadId', 'UNKNOWN')}: {err}", file=sys.stderr)
+        return False
+    return True
 
 def sanitize_field(value):
     if value is None:
@@ -84,6 +85,7 @@ def main():
     now=time.time()
 
     new_items=[]
+    append_failures=0
     for thread_id,msg_id,date,from_,subject in rows:
         thread_id=sanitize_field(thread_id)
         msg_id=sanitize_field(msg_id)
@@ -112,7 +114,10 @@ def main():
             "createdAt":now,
             "updatedAt":now
         }
-        append_event(ev)
+        if not append_event(ev):
+            append_failures += 1
+            continue
+
         new_items.append((thread_id,msg_id,date,from_,subject))
 
         # mark thread read
@@ -120,11 +125,15 @@ def main():
 
     if not new_items:
         print("NO_NEW_AFTER_DEDUPE")
+        if append_failures:
+            print(f"APPEND_FAILURES={append_failures}", file=sys.stderr)
         return
 
     for thread_id,msg_id,date,from_,subject in new_items:
         print(f"NEW\t{thread_id}\t{msg_id}\t{date}\t{from_}\t{subject}")
     print(f"TOTAL_NEW={len(new_items)}")
+    if append_failures:
+        print(f"APPEND_FAILURES={append_failures}", file=sys.stderr)
 
 if __name__=="__main__":
     main()
