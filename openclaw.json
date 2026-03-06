@@ -17,7 +17,7 @@
     "providers": {
       "nexos": {
         "baseUrl": "https://api.nexos.ai/v1",
-        "apiKey": "nexos-team-5097daf693b82b146292cb9e07a18fae279aebf5422adc0e759e88d0f2dd0af5f492520ac6dde0f286b441165714b96a729ce9fd571b208be8bf13b4031a9418",
+        "apiKey": "<SET_NEXOS_API_KEY>",
         "api": "openai-completions",
         "auth": "api-key",
         "models": [
@@ -257,7 +257,7 @@
     "ownerDisplay": "raw"
   },
   "hooks": {
-    "token": "Fn2N2s1ZleTUdTNc0eWEekS2VUbICA9J"
+    "token": "<SET_OPENCLAW_TOKEN>"
   },
   "channels": {
     "whatsapp": {
@@ -281,18 +281,18 @@
     "mode": "local",
     "controlUi": {
       "dangerouslyAllowHostHeaderOriginFallback": true,
-      "allowInsecureAuth": true,
-      "dangerouslyDisableDeviceAuth": true
+      "allowInsecureAuth": false,
+      "dangerouslyDisableDeviceAuth": false
     },
     "auth": {
       "mode": "token",
-      "token": "Fn2N2s1ZleTUdTNc0eWEekS2VUbICA9J"
+      "token": "<SET_OPENCLAW_TOKEN>"
     },
     "trustedProxies": [
       "127.0.0.1/32"
     ],
     "remote": {
-      "token": "Fn2N2s1ZleTUdTNc0eWEekS2VUbICA9J"
+      "token": "<SET_OPENCLAW_TOKEN>"
     }
   },
   "plugins": {
