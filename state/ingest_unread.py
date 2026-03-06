@@ -54,8 +54,12 @@ def parse_plain(out):
     return rows
 
 def append_event(ev):
-    with open(LEDGER,"a",encoding="utf-8") as f:
-        f.write(json.dumps(ev, ensure_ascii=False) + "\n")
+    append_script=os.path.join(os.path.dirname(__file__),"append_ledger.py")
+    r=subprocess.run([sys.executable, append_script], input=json.dumps(ev, ensure_ascii=False), text=True, capture_output=True)
+    if r.returncode != 0:
+        err=(r.stderr or r.stdout).strip()
+        print(f"ERROR: append_ledger failed: {err}", file=sys.stderr)
+        sys.exit(4)
 
 def sanitize_field(value):
     if value is None:
