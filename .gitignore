@@ -14,3 +14,7 @@ delivery-queue/
 cron/runs/
 .DS_Store
 Thumbs.db
+
+# Runtime state (ära commit'i)
+**/.openclaw/
+state/ledger.jsonl
