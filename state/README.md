@@ -25,6 +25,17 @@ Validation behavior:
 - Invalid events are rejected immediately by `append_ledger.py`.
 - Events containing tab/newline/carriage-return in core text fields are rejected.
 
+Transition validation:
+- `append_ledger.py` validates transition legality against latest `threadId` state.
+- Allowed transitions:
+  - `<none> -> NEW`
+  - `NEW -> TRIAGED | SKIPPED | FAILED`
+  - `TRIAGED -> DRAFTED | FAILED`
+  - `DRAFTED -> EDITED | NOTIFIED | FAILED`
+  - `EDITED -> NOTIFIED | FAILED`
+  - `NOTIFIED`, `SKIPPED`, `FAILED` are terminal (except idempotent same-status append).
+- Illegal transitions are rejected immediately.
+
 Current state rule:
 - Determine current state by latest event per `threadId`.
 - Never edit old lines, always append.

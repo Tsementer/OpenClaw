@@ -4,9 +4,20 @@ import os
 import sys
 import time
 
-LEDGER = "/data/.openclaw/state/ledger.jsonl"
+LEDGER = os.environ.get("OPENCLAW_LEDGER_PATH", "/data/.openclaw/state/ledger.jsonl")
 MAX_STDIN_BYTES = 100_000
 ALLOWED_STATUS = {"NEW", "TRIAGED", "DRAFTED", "EDITED", "NOTIFIED", "SKIPPED", "FAILED"}
+
+ALLOWED_TRANSITIONS = {
+    None: {"NEW"},
+    "NEW": {"TRIAGED", "SKIPPED", "FAILED"},
+    "TRIAGED": {"DRAFTED", "FAILED"},
+    "DRAFTED": {"EDITED", "NOTIFIED", "FAILED"},
+    "EDITED": {"NOTIFIED", "FAILED"},
+    "NOTIFIED": set(),
+    "SKIPPED": set(),
+    "FAILED": set(),
+}
 
 MAX_LEN = {
     "threadId": 256,
@@ -65,6 +76,52 @@ def _validate_score(obj, field):
         fail(f"Invalid value for {field}: expected 0..10")
 
 
+def _latest_status_for_thread(thread_id):
+    if not os.path.exists(LEDGER):
+        return None
+
+    latest_status = None
+    with open(LEDGER, "r", encoding="utf-8") as f:
+        for line in f:
+            line = line.strip()
+            if not line:
+                continue
+            try:
+                obj = json.loads(line)
+            except json.JSONDecodeError:
+                continue
+
+            if not isinstance(obj, dict):
+                continue
+            if obj.get("threadId") != thread_id:
+                continue
+
+            status = obj.get("status")
+            if isinstance(status, str):
+                latest_status = status
+
+    return latest_status
+
+
+def _validate_transition(obj):
+    thread_id = obj.get("threadId")
+    new_status = obj.get("status")
+    previous_status = _latest_status_for_thread(thread_id)
+
+    # Allow idempotent duplicate writes of the same status.
+    if previous_status == new_status:
+        return
+
+    allowed = ALLOWED_TRANSITIONS.get(previous_status)
+    if allowed is None:
+        fail(f"Unknown previous status for transition: {previous_status}")
+
+    if new_status not in allowed:
+        prev = previous_status if previous_status is not None else "<none>"
+        allowed_txt = ", ".join(sorted(allowed)) if allowed else "<none>"
+        fail(f"Illegal state transition: {prev} -> {new_status}. Allowed: {allowed_txt}")
+
+
 def validate_event(obj):
     if not isinstance(obj, dict):
         fail("Input JSON must be an object")
@@ -115,6 +172,8 @@ def validate_event(obj):
     event = obj.get("event")
     if event is not None and not isinstance(event, str):
         fail("Invalid type for event: expected string")
+
+    _validate_transition(obj)
 
 
 def main():
