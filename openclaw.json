@@ -17,7 +17,7 @@
     "providers": {
       "nexos": {
         "baseUrl": "https://api.nexos.ai/v1",
-        "apiKey": "<SET_NEXOS_API_KEY>",
+        "apiKey": "SET_NEXOS_API_KEY",
         "api": "openai-completions",
         "auth": "api-key",
         "models": [
@@ -257,7 +257,7 @@
     "ownerDisplay": "raw"
   },
   "hooks": {
-    "token": "<SET_OPENCLAW_TOKEN>"
+    "token": "SET_OPENCLAW_TOKEN"
   },
   "channels": {
     "whatsapp": {
@@ -286,13 +286,13 @@
     },
     "auth": {
       "mode": "token",
-      "token": "<SET_OPENCLAW_TOKEN>"
+      "token": "SET_OPENCLAW_TOKEN"
     },
     "trustedProxies": [
       "127.0.0.1/32"
     ],
     "remote": {
-      "token": "<SET_OPENCLAW_TOKEN>"
+      "token": "SET_OPENCLAW_TOKEN"
     }
   },
   "plugins": {

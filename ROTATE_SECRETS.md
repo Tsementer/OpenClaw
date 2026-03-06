@@ -45,16 +45,16 @@ Allpool kaks varianti. Kasuta ühte.
 
 1. Kopeeri repo `openclaw.json` serverisse (või ava olemasolev fail).
 2. Asenda placeholderid päris väärtustega:
-   - `<SET_NEXOS_API_KEY>`
-   - `<SET_OPENCLAW_TOKEN>`
+   - `SET_NEXOS_API_KEY`
+   - `SET_OPENCLAW_TOKEN`
 3. Salvesta fail serveris asukohta, kust OpenClaw seda loeb.
 
 Näide (kohanda path vastavalt sinu setupile):
 
 ```bash
 cp openclaw.json /data/.openclaw/openclaw.json
-sed -i "s|<SET_NEXOS_API_KEY>|$NEXOS_API_KEY|g" /data/.openclaw/openclaw.json
-sed -i "s|<SET_OPENCLAW_TOKEN>|$OPENCLAW_TOKEN|g" /data/.openclaw/openclaw.json
+sed -i "s|SET_NEXOS_API_KEY|$NEXOS_API_KEY|g" /data/.openclaw/openclaw.json
+sed -i "s|SET_OPENCLAW_TOKEN|$OPENCLAW_TOKEN|g" /data/.openclaw/openclaw.json
 ```
 
 ### Variant B — envsubst/templating (soovituslik)
@@ -66,8 +66,8 @@ export NEXOS_API_KEY='<uus_nexos_api_voti>'
 export OPENCLAW_TOKEN='<uus_pikk_juhuslik_token>'
 
 cat openclaw.json \
-  | sed 's|<SET_NEXOS_API_KEY>|'"$NEXOS_API_KEY"'|g' \
-  | sed 's|<SET_OPENCLAW_TOKEN>|'"$OPENCLAW_TOKEN"'|g' \
+  | sed 's|SET_NEXOS_API_KEY|'"$NEXOS_API_KEY"'|g' \
+  | sed 's|SET_OPENCLAW_TOKEN|'"$OPENCLAW_TOKEN"'|g' \
   > /data/.openclaw/openclaw.json
 ```
 
@@ -86,7 +86,7 @@ docker compose up -d
 python3 -m json.tool /data/.openclaw/openclaw.json >/dev/null
 
 # kontrolli, et placeholderid on kadunud runtime failist
-rg -n "<SET_NEXOS_API_KEY>|<SET_OPENCLAW_TOKEN>" /data/.openclaw/openclaw.json
+rg -n "SET_NEXOS_API_KEY|SET_OPENCLAW_TOKEN" /data/.openclaw/openclaw.json
 
 # kontrolli, et vana lekkinud võtme muster ei esine repo failis
 rg -n "nexos-team-|Fn2N2s1" openclaw.json
