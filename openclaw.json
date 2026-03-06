@@ -9,7 +9,7 @@
   },
   "browser": {
     "headless": true,
-    "noSandbox": true,
+    "noSandbox": false,
     "defaultProfile": "openclaw"
   },
   "models": {
@@ -280,19 +280,19 @@
   "gateway": {
     "mode": "local",
     "controlUi": {
-      "dangerouslyAllowHostHeaderOriginFallback": true,
-      "allowInsecureAuth": true,
-      "dangerouslyDisableDeviceAuth": true
+      "dangerouslyAllowHostHeaderOriginFallback": false,
+      "allowInsecureAuth": false,
+      "dangerouslyDisableDeviceAuth": false
     },
     "auth": {
       "mode": "token",
-      "token": "Fn2N2s1ZleTUdTNc0eWEekS2VUbICA9J"
+      "token": "SET_OPENCLAW_GATEWAY_TOKEN"
     },
     "trustedProxies": [
       "127.0.0.1/32"
     ],
     "remote": {
-      "token": "Fn2N2s1ZleTUdTNc0eWEekS2VUbICA9J"
+      "token": "SET_OPENCLAW_REMOTE_TOKEN"
     }
   },
   "plugins": {

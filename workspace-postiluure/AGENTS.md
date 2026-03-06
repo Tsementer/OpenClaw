@@ -20,7 +20,7 @@ Triagi threadId=<threadId> messageId=<messageId> subject=<subject> from=<from> r
 
 3) Täiskeha / orig-meta reegel:
    - Kui FORWARDED=1: too täiskeha ALATI ja võta origFrom/origSubject/origSent:
-     export GOG_KEYRING_PASSWORD=peatoimetaja2026 && python3 /data/.openclaw/state/extract_forward_meta.py <messageId>
+     export GOG_KEYRING_PASSWORD="$GOG_KEYRING_PASSWORD" && python3 /data/.openclaw/state/extract_forward_meta.py <messageId>
    - Kui FORWARDED=0: too täiskeha ainult siis, kui prescore >= 6.
 
 4) Finalscore:
@@ -52,3 +52,7 @@ print(json.dumps({
   "reason":"1–2 lauset"
 }, ensure_ascii=False))
 PY
+
+
+## Secret handling
+- Kasuta `GOG_KEYRING_PASSWORD` väärtust ainult keskkonnast/secret-store'ist; ära hardcode'i parooli juhistesse ega skriptidesse.
