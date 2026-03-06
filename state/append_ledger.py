@@ -40,10 +40,13 @@ REQUIRED_FIELDS = {
     "prescore",
     "finalscore",
     "status",
-    "docsLinks",
-    "lastError",
     "createdAt",
     "updatedAt",
+}
+
+OPTIONAL_FIELDS_WITH_DEFAULTS = {
+    "docsLinks": [],
+    "lastError": None,
 }
 
 
@@ -225,6 +228,8 @@ def main():
 
     now = time.time()
     obj.setdefault("event", obj.get("status", "UNKNOWN"))
+    for key, value in OPTIONAL_FIELDS_WITH_DEFAULTS.items():
+        obj.setdefault(key, value)
     obj.setdefault("createdAt", now)
     obj["updatedAt"] = now
     obj.setdefault("idempotencyKey", _build_idempotency_key(obj))
