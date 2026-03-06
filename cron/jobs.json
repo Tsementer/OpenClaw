@@ -1,4 +1,4 @@
-﻿{
+{
   "version": 1,
   "jobs": [
     {
@@ -6,7 +6,7 @@
       "name": "Postkasti kontroll hommik",
       "enabled": true,
       "createdAtMs": 1772269350563,
-      "updatedAtMs": 1772737957146,
+      "updatedAtMs": 1772755075199,
       "schedule": {
         "kind": "cron",
         "expr": "0 8 * * *",
@@ -16,22 +16,22 @@
       "wakeMode": "now",
       "payload": {
         "kind": "agentTurn",
-        "message": "Run now:\nexport GOG_KEYRING_PASSWORD='peatoimetaja2026' && /data/bin/gog gmail messages search 'is:unread in:inbox'\n\nIf empty, answer exactly: INBOX_EMPTY\n\nFor each message result:\n1) Read threadId, messageId, subject, from, receivedAt.\n2) Check latest ledger state for threadId in state/ledger.jsonl. If latest status is TRIAGED/DRAFTED/EDITED/NOTIFIED/SKIPPED, skip.\n3) Append NEW event to state/ledger.jsonl with required fields: threadId, messageId, subject, from, receivedAt, prescore, finalscore, status, docsLinks, lastError, createdAt, updatedAt.\n4) Spawn Postiluure (non-blocking):\n   sessions_spawn agentId='postiluure' task='Triagi threadId=<threadId> messageId=<messageId> subject=<subject> from=<from> receivedAt=<receivedAt>. Fetch full body only if prescore >= 6. Append TRIAGED/SKIPPED/FAILED ledger event.'\n5) Mark processed thread read:\n   export GOG_KEYRING_PASSWORD='peatoimetaja2026' && /data/bin/gog gmail labels modify <threadId> --remove UNREAD\n\nDo not wait for subagent completion. Return counts: total, queued, skipped-existing."
+        "message": "Käivita exec tööriistaga TÄPSELT:\nexport GOG_KEYRING_PASSWORD='<REDACTED>' && python3 /data/.openclaw/state/ingest_unread.py\n\nKui väljund on INBOX_EMPTY või NO_NEW_AFTER_DEDUPE, vasta täpselt sama tekstiga.\n\nKui väljundis on read kujul:\nNEW<TAB><threadId><TAB><messageId><TAB><receivedAt><TAB><from><TAB><subject>\n\nsiis iga NEW rea kohta spawni Postiluure (ära oota):\nsessions_spawn agentId='postiluure' task='Triagi threadId=<threadId> messageId=<messageId> subject=<subject> from=<from> receivedAt=<receivedAt>. Kirjuta tulemus /data/.openclaw/state/ledger.jsonl: staatus TRIAGED või SKIPPED või FAILED. Täiskeha too ainult siis, kui esmane hinne >=6.'\n\nLõpus vasta: QUEUED_OK\n"
       },
       "delivery": {
         "mode": "announce",
         "channel": "telegram",
-        "to": "telegram:5263193787"
+        "to": "telegram:<REDACTED_CHAT_ID>"
       },
       "state": {
         "nextRunAtMs": 1772776800000,
-        "lastRunAtMs": 1772737895223,
-        "lastRunStatus": "ok",
-        "lastStatus": "ok",
-        "lastDurationMs": 61923,
-        "lastDeliveryStatus": "delivered",
-        "consecutiveErrors": 0,
-        "lastDelivered": true
+        "lastRunAtMs": 1772755061115,
+        "lastRunStatus": "error",
+        "lastStatus": "error",
+        "lastDurationMs": 14084,
+        "lastDeliveryStatus": "unknown",
+        "consecutiveErrors": 6,
+        "lastError": "cron announce delivery failed"
       }
     },
     {
@@ -49,12 +49,12 @@
       "wakeMode": "now",
       "payload": {
         "kind": "agentTurn",
-        "message": "Run now:\nexport GOG_KEYRING_PASSWORD='peatoimetaja2026' && /data/bin/gog gmail messages search 'is:unread in:inbox'\n\nIf empty, answer exactly: INBOX_EMPTY\n\nFor each message result:\n1) Read threadId, messageId, subject, from, receivedAt.\n2) Check latest ledger state for threadId in state/ledger.jsonl. If latest status is TRIAGED/DRAFTED/EDITED/NOTIFIED/SKIPPED, skip.\n3) Append NEW event to state/ledger.jsonl with required fields: threadId, messageId, subject, from, receivedAt, prescore, finalscore, status, docsLinks, lastError, createdAt, updatedAt.\n4) Spawn Postiluure (non-blocking):\n   sessions_spawn agentId='postiluure' task='Triagi threadId=<threadId> messageId=<messageId> subject=<subject> from=<from> receivedAt=<receivedAt>. Fetch full body only if prescore >= 6. Append TRIAGED/SKIPPED/FAILED ledger event.'\n5) Mark processed thread read:\n   export GOG_KEYRING_PASSWORD='peatoimetaja2026' && /data/bin/gog gmail labels modify <threadId> --remove UNREAD\n\nDo not wait for subagent completion. Return counts: total, queued, skipped-existing."
+        "message": "Käivita exec tööriistaga TÄPSELT:\nexport GOG_KEYRING_PASSWORD='<REDACTED>' && python3 /data/.openclaw/state/ingest_unread.py\n\nKui väljund on INBOX_EMPTY või NO_NEW_AFTER_DEDUPE, vasta täpselt sama tekstiga.\n\nKui väljundis on read kujul:\nNEW<TAB><threadId><TAB><messageId><TAB><receivedAt><TAB><from><TAB><subject>\n\nsiis iga NEW rea kohta spawni Postiluure (ära oota):\nsessions_spawn agentId='postiluure' task='Triagi threadId=<threadId> messageId=<messageId> subject=<subject> from=<from> receivedAt=<receivedAt>. Kirjuta tulemus /data/.openclaw/state/ledger.jsonl: staatus TRIAGED või SKIPPED või FAILED. Täiskeha too ainult siis, kui esmane hinne >=6.'\n\nLõpus vasta: QUEUED_OK\n"
       },
       "delivery": {
         "mode": "announce",
         "channel": "telegram",
-        "to": "telegram:5263193787"
+        "to": "telegram:<REDACTED_CHAT_ID>"
       },
       "state": {
         "nextRunAtMs": 1772809200000,
@@ -72,7 +72,7 @@
       "name": "Reconcile & notify",
       "enabled": true,
       "createdAtMs": 1772740000000,
-      "updatedAtMs": 1772740000000,
+      "updatedAtMs": 1772756404832,
       "schedule": {
         "kind": "cron",
         "expr": "*/20 * * * *",
@@ -87,9 +87,18 @@
       "delivery": {
         "mode": "announce",
         "channel": "telegram",
-        "to": "telegram:5263193787"
+        "to": "telegram:<REDACTED_CHAT_ID>"
+      },
+      "state": {
+        "nextRunAtMs": 1772757600000,
+        "lastRunAtMs": 1772756400017,
+        "lastRunStatus": "error",
+        "lastStatus": "error",
+        "lastDurationMs": 4815,
+        "lastDeliveryStatus": "unknown",
+        "consecutiveErrors": 4,
+        "lastError": "cron announce delivery failed"
       }
     }
   ]
 }
-

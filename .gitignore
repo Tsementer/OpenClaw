@@ -1,0 +1,16 @@
+.env
+credentials/
+credentials.json
+**/credentials/
+**/*.token
+**/*client_secret*
+**/*oauth*
+**/*keyring*
+state/ledger.jsonl
+state/*.jsonl
+logs/
+media/
+delivery-queue/
+cron/runs/
+.DS_Store
+Thumbs.db
