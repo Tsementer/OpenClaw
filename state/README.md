@@ -36,6 +36,12 @@ Transition validation:
   - `NOTIFIED`, `SKIPPED`, `FAILED` are terminal (except idempotent same-status append).
 - Illegal transitions are rejected immediately.
 
+Idempotency validation:
+- `append_ledger.py` enforces event idempotency with `idempotencyKey`.
+- Default key is derived as `threadId::messageId::status` when caller does not provide one.
+- If the same key arrives with identical payload (excluding `createdAt`/`updatedAt`), writer returns `IDEMPOTENT_OK` and does not append a duplicate row.
+- If the same key arrives with different content, writer rejects with `Idempotency key conflict`.
+
 Current state rule:
 - Determine current state by latest event per `threadId`.
 - Never edit old lines, always append.

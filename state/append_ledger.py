@@ -27,6 +27,7 @@ MAX_LEN = {
     "receivedAt": 128,
     "lastError": 2000,
     "docLink": 2000,
+    "idempotencyKey": 1024,
 }
 MAX_DOC_LINKS = 20
 
@@ -54,6 +55,37 @@ def _is_number(value):
     return isinstance(value, (int, float)) and not isinstance(value, bool)
 
 
+def _iter_ledger_events():
+    if not os.path.exists(LEDGER):
+        return
+
+    with open(LEDGER, "r", encoding="utf-8") as f:
+        for line in f:
+            line = line.strip()
+            if not line:
+                continue
+            try:
+                obj = json.loads(line)
+            except json.JSONDecodeError:
+                continue
+            if isinstance(obj, dict):
+                yield obj
+
+
+def _build_idempotency_key(obj):
+    custom_key = obj.get("idempotencyKey")
+    if custom_key is not None:
+        return custom_key
+    return f"{obj.get('threadId','')}::{obj.get('messageId','')}::{obj.get('status','')}"
+
+
+def _canonical_event_for_idempotency(obj):
+    canon = dict(obj)
+    canon.pop("createdAt", None)
+    canon.pop("updatedAt", None)
+    return canon
+
+
 def _validate_text_field(obj, field, allow_empty=False):
     value = obj.get(field)
     if not isinstance(value, str):
@@ -77,29 +109,13 @@ def _validate_score(obj, field):
 
 
 def _latest_status_for_thread(thread_id):
-    if not os.path.exists(LEDGER):
-        return None
-
     latest_status = None
-    with open(LEDGER, "r", encoding="utf-8") as f:
-        for line in f:
-            line = line.strip()
-            if not line:
-                continue
-            try:
-                obj = json.loads(line)
-            except json.JSONDecodeError:
-                continue
-
-            if not isinstance(obj, dict):
-                continue
-            if obj.get("threadId") != thread_id:
-                continue
-
-            status = obj.get("status")
-            if isinstance(status, str):
-                latest_status = status
-
+    for obj in _iter_ledger_events() or []:
+        if obj.get("threadId") != thread_id:
+            continue
+        status = obj.get("status")
+        if isinstance(status, str):
+            latest_status = status
     return latest_status
 
 
@@ -108,7 +124,6 @@ def _validate_transition(obj):
     new_status = obj.get("status")
     previous_status = _latest_status_for_thread(thread_id)
 
-    # Allow idempotent duplicate writes of the same status.
     if previous_status == new_status:
         return
 
@@ -120,6 +135,22 @@ def _validate_transition(obj):
         prev = previous_status if previous_status is not None else "<none>"
         allowed_txt = ", ".join(sorted(allowed)) if allowed else "<none>"
         fail(f"Illegal state transition: {prev} -> {new_status}. Allowed: {allowed_txt}")
+
+
+def _idempotency_conflict_or_duplicate(obj):
+    incoming_key = _build_idempotency_key(obj)
+    incoming_canon = _canonical_event_for_idempotency(obj)
+
+    for existing in _iter_ledger_events() or []:
+        if _build_idempotency_key(existing) != incoming_key:
+            continue
+
+        existing_canon = _canonical_event_for_idempotency(existing)
+        if existing_canon == incoming_canon:
+            return "duplicate"
+        return "conflict"
+
+    return None
 
 
 def validate_event(obj):
@@ -173,6 +204,10 @@ def validate_event(obj):
     if event is not None and not isinstance(event, str):
         fail("Invalid type for event: expected string")
 
+    idempotency_key = obj.get("idempotencyKey")
+    if idempotency_key is not None:
+        _validate_text_field(obj, "idempotencyKey")
+
     _validate_transition(obj)
 
 
@@ -192,8 +227,16 @@ def main():
     obj.setdefault("event", obj.get("status", "UNKNOWN"))
     obj.setdefault("createdAt", now)
     obj["updatedAt"] = now
+    obj.setdefault("idempotencyKey", _build_idempotency_key(obj))
 
     validate_event(obj)
+
+    idem_result = _idempotency_conflict_or_duplicate(obj)
+    if idem_result == "duplicate":
+        print("IDEMPOTENT_OK")
+        return
+    if idem_result == "conflict":
+        fail(f"Idempotency key conflict: {obj.get('idempotencyKey')}")
 
     os.makedirs(os.path.dirname(LEDGER), exist_ok=True)
     flags = os.O_WRONLY | os.O_APPEND | os.O_CREAT
