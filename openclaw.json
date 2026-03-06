@@ -257,7 +257,7 @@
     "ownerDisplay": "raw"
   },
   "hooks": {
-    "token": "Fn2N2s1ZleTUdTNc0eWEekS2VUbICA9J"
+    "token": "SET_OPENCLAW_TOKEN"
   },
   "channels": {
     "whatsapp": {
