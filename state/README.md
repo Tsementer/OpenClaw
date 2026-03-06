@@ -3,19 +3,27 @@
 File: `state/ledger.jsonl`
 Format: one JSON object per line (append-only).
 
+Write path:
+- All ledger writes must go through `state/append_ledger.py`.
+- Writers must not append to `ledger.jsonl` directly.
+
 Required fields per event:
-- `threadId`
-- `messageId`
-- `subject`
-- `from`
-- `receivedAt`
-- `prescore`
-- `finalscore`
+- `threadId` (string, 1..256)
+- `messageId` (string, 1..256)
+- `subject` (string, 1..500)
+- `from` (string, 1..500)
+- `receivedAt` (string, 1..128)
+- `prescore` (integer 0..10 or `null`)
+- `finalscore` (integer 0..10 or `null`)
 - `status` (`NEW`, `TRIAGED`, `DRAFTED`, `EDITED`, `NOTIFIED`, `SKIPPED`, `FAILED`)
-- `docsLinks` (array)
-- `lastError`
-- `createdAt`
-- `updatedAt`
+- `docsLinks` (array, max 20 items; each string 1..2000)
+- `lastError` (string up to 2000 or `null`)
+- `createdAt` (number)
+- `updatedAt` (number)
+
+Validation behavior:
+- Invalid events are rejected immediately by `append_ledger.py`.
+- Events containing tab/newline/carriage-return in core text fields are rejected.
 
 Current state rule:
 - Determine current state by latest event per `threadId`.
