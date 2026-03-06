@@ -6,7 +6,7 @@
       "name": "Postkasti kontroll hommik",
       "enabled": true,
       "createdAtMs": 1772269350563,
-      "updatedAtMs": 1772755075199,
+      "updatedAtMs": 1772793844273,
       "schedule": {
         "kind": "cron",
         "expr": "0 8 * * *",
@@ -19,19 +19,19 @@
         "message": "Käivita exec tööriistaga TÄPSELT:\ntest -n \"$GOG_KEYRING_PASSWORD\" && python3 /data/.openclaw/state/intake_dispatch.py\n\nTõlgenda väljundit:\n- Kui rida on INBOX_EMPTY või NO_NEW_AFTER_DEDUPE, vasta täpselt sama tekstiga.\n- Iga rea puhul kujul SPAWN<TAB><agentId><TAB><task> käivita:\n  sessions_spawn agentId='<agentId>' task='<task>'\n- Kui leidub vähemalt üks SPAWN rida, vasta lõpus: QUEUED_OK\n"
       },
       "delivery": {
-        "mode": "announce",
+        "mode": "none",
         "channel": "telegram",
-        "to": "telegram:<REDACTED_CHAT_ID>"
+        "to": "telegram:5263193787"
       },
       "state": {
-        "nextRunAtMs": 1772776800000,
-        "lastRunAtMs": 1772755061115,
+        "nextRunAtMs": 1772863200000,
+        "lastRunAtMs": 1772793841587,
         "lastRunStatus": "error",
-        "lastStatus": "error",
-        "lastDurationMs": 14084,
+        "lastStatus": "ok",
+        "lastDurationMs": 2686,
         "lastDeliveryStatus": "unknown",
-        "consecutiveErrors": 6,
-        "lastError": "cron announce delivery failed"
+        "consecutiveErrors": 0,
+        "lastError": null
       }
     },
     {
@@ -39,7 +39,7 @@
       "name": "Postkasti kontroll õhtu",
       "enabled": true,
       "createdAtMs": 1772269388929,
-      "updatedAtMs": 1772722810160,
+      "updatedAtMs": 1772809207614,
       "schedule": {
         "kind": "cron",
         "expr": "0 17 * * *",
@@ -52,16 +52,16 @@
         "message": "Käivita exec tööriistaga TÄPSELT:\ntest -n \"$GOG_KEYRING_PASSWORD\" && python3 /data/.openclaw/state/intake_dispatch.py\n\nTõlgenda väljundit:\n- Kui rida on INBOX_EMPTY või NO_NEW_AFTER_DEDUPE, vasta täpselt sama tekstiga.\n- Iga rea puhul kujul SPAWN<TAB><agentId><TAB><task> käivita:\n  sessions_spawn agentId='<agentId>' task='<task>'\n- Kui leidub vähemalt üks SPAWN rida, vasta lõpus: QUEUED_OK\n"
       },
       "delivery": {
-        "mode": "announce",
+        "mode": "none",
         "channel": "telegram",
-        "to": "telegram:<REDACTED_CHAT_ID>"
+        "to": "telegram:5263193787"
       },
       "state": {
-        "nextRunAtMs": 1772809200000,
-        "lastRunAtMs": 1772722800007,
+        "nextRunAtMs": 1772895600000,
+        "lastRunAtMs": 1772809200005,
         "lastRunStatus": "ok",
         "lastStatus": "ok",
-        "lastDurationMs": 10153,
+        "lastDurationMs": 7609,
         "lastDeliveryStatus": "not-delivered",
         "consecutiveErrors": 0,
         "lastDelivered": false
@@ -72,7 +72,7 @@
       "name": "Reconcile & notify",
       "enabled": true,
       "createdAtMs": 1772740000000,
-      "updatedAtMs": 1772756404832,
+      "updatedAtMs": 1772820019355,
       "schedule": {
         "kind": "cron",
         "expr": "*/20 * * * *",
@@ -85,19 +85,19 @@
         "message": "Käivita exec tööriistaga TÄPSELT:\npython3 /data/.openclaw/state/reconcile_dispatch.py\n\nTõlgenda väljundit:\n- Iga rea puhul kujul SPAWN<TAB><agentId><TAB><task> käivita:\n  sessions_spawn agentId='<agentId>' task='<task>'\n- Kui on rida kujul SUMMARY<TAB><text>, vasta täpselt <text>.\n- Kui on NO_SUMMARY, jäta vastus tühjaks.\n- Ignoreeri ridu kujul NOOP või NOTIFIED_APPENDED<TAB><n>.\n- Ära oota spawned agentite lõpetamist.\n"
       },
       "delivery": {
-        "mode": "announce",
+        "mode": "none",
         "channel": "telegram",
-        "to": "telegram:<REDACTED_CHAT_ID>"
+        "to": "telegram:5263193787"
       },
       "state": {
-        "nextRunAtMs": 1772757600000,
-        "lastRunAtMs": 1772756400017,
-        "lastRunStatus": "error",
-        "lastStatus": "error",
-        "lastDurationMs": 4815,
-        "lastDeliveryStatus": "unknown",
-        "consecutiveErrors": 4,
-        "lastError": "cron announce delivery failed"
+        "nextRunAtMs": 1772821200000,
+        "lastRunAtMs": 1772820000005,
+        "lastRunStatus": "ok",
+        "lastStatus": "ok",
+        "lastDurationMs": 19350,
+        "lastDeliveryStatus": "not-delivered",
+        "consecutiveErrors": 0,
+        "lastDelivered": false
       }
     }
   ]

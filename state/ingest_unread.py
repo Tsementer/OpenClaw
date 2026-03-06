@@ -4,7 +4,6 @@ import os, sys, subprocess, json, time
 GOG="/data/bin/gog"
 LEDGER="/data/.openclaw/state/ledger.jsonl"
 QUERY="is:unread in:inbox"
-MAX_FIELD_LEN=500
 
 def run(cmd):
     env=os.environ.copy()
@@ -54,19 +53,8 @@ def parse_plain(out):
     return rows
 
 def append_event(ev):
-    append_script=os.path.join(os.path.dirname(__file__),"append_ledger.py")
-    r=subprocess.run([sys.executable, append_script], input=json.dumps(ev, ensure_ascii=False), text=True, capture_output=True)
-    if r.returncode != 0:
-        err=(r.stderr or r.stdout).strip()
-        print(f"ERROR: append_ledger failed: {err}", file=sys.stderr)
-        sys.exit(4)
-
-def sanitize_field(value):
-    if value is None:
-        return ""
-    clean=value.replace("\r"," ").replace("\n"," ").replace("\t"," ")
-    clean="".join(ch for ch in clean if ch.isprintable())
-    return clean.strip()[:MAX_FIELD_LEN]
+    with open(LEDGER,"a",encoding="utf-8") as f:
+        f.write(json.dumps(ev, ensure_ascii=False) + "\n")
 
 def main():
     r=run([GOG,"gmail","messages","search",QUERY,"--plain"])
@@ -85,14 +73,6 @@ def main():
 
     new_items=[]
     for thread_id,msg_id,date,from_,subject in rows:
-        thread_id=sanitize_field(thread_id)
-        msg_id=sanitize_field(msg_id)
-        date=sanitize_field(date)
-        from_=sanitize_field(from_)
-        subject=sanitize_field(subject)
-        if not thread_id or not msg_id:
-            continue
-
         prev=latest.get(thread_id)
         if prev and prev.get("status") in done:
             continue

@@ -9,19 +9,36 @@ Receive task with `threadId` and `messageId`.
 - Do not add facts not present in source material.
 
 ## Workflow
-1. Fetch full email body for assigned message:
+1. Fetch full email body:
    `export GOG_KEYRING_PASSWORD="$GOG_KEYRING_PASSWORD" && /data/bin/gog gmail get <messageId> --format full`
-2. Use per-message isolated files:
-   - `TMP_DIR=/tmp/openclaw/<threadId>/<messageId>`
-   - `TMP_FILE=$TMP_DIR/uudis-<messageId>.md`
-   - Never use shared `/tmp/uudis.md`.
-3. Write draft to `$TMP_FILE`.
-4. Create Google Doc from `$TMP_FILE`.
-5. Append `DRAFTED` event to `state/ledger.jsonl` with `docsLinks`.
-6. Return concise result with doc link.
+
+2. Create temp dir and write draft:
+```
+   mkdir -p /tmp/openclaw/<threadId>/<messageId>
+```
+   Write the news article to `/tmp/openclaw/<threadId>/<messageId>/uudis.md`
+
+3. Upload to Google Docs:
+```
+   export GOG_KEYRING_PASSWORD="$GOG_KEYRING_PASSWORD" && /data/bin/gog drive upload /tmp/openclaw/<threadId>/<messageId>/uudis.md --convert-to=doc --name "<pealkiri>" --json
+```
+   Save the returned file ID.
+
+4. Get the doc URL:
+```
+   /data/bin/gog drive url <fileId>
+```
+
+5. Append DRAFTED event to ledger:
+```
+   python3 /data/.openclaw/state/append_ledger.py
+```
+   Pipe JSON with status=DRAFTED and docsLinks=[doc URL].
+
+6. Return doc link to user.
 
 ## Secret handling
-- Ensure `GOG_KEYRING_PASSWORD` is injected from environment/secret storage (never hardcode).
+- Use GOG_KEYRING_PASSWORD from environment only. Never hardcode.
 
 ## Concurrency
 Multiple runs may happen in parallel. Never reuse temp paths across messages.

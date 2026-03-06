@@ -1,17 +1,54 @@
 #!/usr/bin/env python3
+"""reconcile_dispatch.py — Vaatab ledger olekud, käivitab Kirjutaja/Toimetaja."""
 import json
 import os
 import subprocess
 import sys
 import time
-from typing import Dict, List
 
 SCRIPT_DIR = os.path.dirname(__file__)
 APPEND_LEDGER = os.path.join(SCRIPT_DIR, "append_ledger.py")
+NOTIFY_SCRIPT = os.path.join(SCRIPT_DIR, "slack_notify.py")
 LEDGER = os.environ.get("OPENCLAW_LEDGER_PATH", "/data/.openclaw/state/ledger.jsonl")
 
 
-def load_events() -> List[dict]:
+def spawn_agent(agent_id, task_message):
+    """Käivita openclaw agent päriselt."""
+    cmd = [
+        "openclaw", "agent",
+        "--agent", agent_id,
+        "--message", task_message,
+        "--timeout", "300",
+    ]
+    print(f"SPAWN\t{agent_id}\t{task_message[:80]}...")
+    try:
+        result = subprocess.run(
+            cmd, text=True, capture_output=True, timeout=320,
+            env={**os.environ, "PATH": "/usr/local/bin:/usr/bin:/bin:" + os.environ.get("PATH", "")},
+        )
+        if result.returncode == 0:
+            print(f"SPAWN_OK\t{agent_id}")
+            if result.stdout:
+                print(result.stdout.strip())
+            return True
+        else:
+            err = (result.stderr or result.stdout or "").strip()
+            print(f"SPAWN_FAIL\t{agent_id}\t{err[:200]}", file=sys.stderr)
+            try:
+                subprocess.run(
+                    [sys.executable, NOTIFY_SCRIPT, "--error",
+                     f"{agent_id} spawn ebaõnnestus: {err[:200]}"],
+                    timeout=15, capture_output=True,
+                )
+            except Exception:
+                pass
+            return False
+    except subprocess.TimeoutExpired:
+        print(f"SPAWN_TIMEOUT\t{agent_id}", file=sys.stderr)
+        return False
+
+
+def load_events():
     if not os.path.exists(LEDGER):
         return []
     events = []
@@ -29,29 +66,27 @@ def load_events() -> List[dict]:
     return events
 
 
-def latest_by_thread(events: List[dict]) -> Dict[str, dict]:
+def latest_by_thread(events):
     latest = {}
     for ev in events:
         tid = ev.get("threadId")
-        if not tid:
-            continue
-        latest[tid] = ev
+        if tid:
+            latest[tid] = ev
     return latest
 
 
-def history_index(events: List[dict]) -> Dict[str, set]:
-    idx: Dict[str, set] = {}
+def history_index(events):
+    idx = {}
     for ev in events:
         tid = ev.get("threadId")
         status = ev.get("status")
-        if not tid or not status:
-            continue
-        idx.setdefault(tid, set()).add(status)
+        if tid and status:
+            idx.setdefault(tid, set()).add(status)
     return idx
 
 
-def docs_links_of_thread(events: List[dict]) -> Dict[str, List[str]]:
-    links: Dict[str, List[str]] = {}
+def docs_links_of_thread(events):
+    links = {}
     for ev in events:
         tid = ev.get("threadId")
         if not tid:
@@ -62,7 +97,7 @@ def docs_links_of_thread(events: List[dict]) -> Dict[str, List[str]]:
     return links
 
 
-def append_notified_event(source_event: dict) -> None:
+def append_notified_event(source_event):
     payload = {
         "event": "NOTIFIED",
         "threadId": source_event.get("threadId", ""),
@@ -92,11 +127,7 @@ def append_notified_event(source_event: dict) -> None:
         raise RuntimeError(f"append_ledger failed for NOTIFIED: {msg}")
 
 
-def _quote_task_value(value: str) -> str:
-    return value.replace("'", "\\'")
-
-
-def main() -> int:
+def main():
     events = load_events()
     if not events:
         print("NOOP")
@@ -106,23 +137,39 @@ def main() -> int:
     hist = history_index(events)
     links = docs_links_of_thread(events)
 
+    spawned = 0
+
     for tid, ev in latest.items():
         status = ev.get("status")
         finalscore = ev.get("finalscore")
 
-        if status == "TRIAGED" and isinstance(finalscore, int) and finalscore >= 6:
+        # TRIAGED → spawn Kirjutaja
+        if status == "TRIAGED" and isinstance(finalscore, (int, float)) and finalscore >= 6:
             h = hist.get(tid, set())
             if not any(x in h for x in ("DRAFTED", "EDITED", "FAILED")):
-                task = f"Koosta draft threadId={tid} messageId={ev.get('messageId','')}. Kirjuta DRAFTED ledger event koos docsLinks."
-                print("SPAWN\tkirjutaja\t" + _quote_task_value(task))
+                task = (
+                    f"Koosta draft threadId={tid} messageId={ev.get('messageId', '')}. "
+                    f"Loe e-kirja täiskeha ja kirjuta Delfi Ärilehe stiilis uudislugu. "
+                    f"Kirjuta DRAFTED ledger event koos docsLinks."
+                )
+                if spawn_agent("kirjutaja", task):
+                    spawned += 1
+                time.sleep(5)
 
+        # DRAFTED → spawn Toimetaja
         if status == "DRAFTED":
             h = hist.get(tid, set())
             dl = links.get(tid, [])
             if dl and not any(x in h for x in ("EDITED", "FAILED")):
-                task = f"Toimeta lugu threadId={tid} docsLink={dl[0]}. Kirjuta EDITED ledger event koos docsLinks."
-                print("SPAWN\ttoimetaja\t" + _quote_task_value(task))
+                task = (
+                    f"Toimeta lugu threadId={tid} docsLink={dl[0]}. "
+                    f"Kirjuta EDITED ledger event koos docsLinks."
+                )
+                if spawn_agent("toimetaja", task):
+                    spawned += 1
+                time.sleep(5)
 
+    # Teavitused
     notify_items = []
     for tid, ev in latest.items():
         status = ev.get("status")
@@ -132,26 +179,19 @@ def main() -> int:
             continue
         notify_items.append(ev)
 
-    if not notify_items:
-        print("NO_SUMMARY")
+    if not notify_items and spawned == 0:
+        print("NO_WORK")
         return 0
 
-    notify_items.sort(key=lambda x: x.get("finalscore") or -1, reverse=True)
-    lines = ["Uudiste kokkuvõte:"]
-    for ev in notify_items[:10]:
-        score = ev.get("finalscore")
-        tid = ev.get("threadId", "?")
-        subject = ev.get("subject", "")
-        dl = ev.get("docsLinks") if isinstance(ev.get("docsLinks"), list) else []
-        link_txt = f" | {dl[0]}" if dl else ""
-        lines.append(f"- [{score}] {subject} (thread {tid}){link_txt}")
-
-    print("SUMMARY\t" + "\\n".join(lines))
-
+    # Append NOTIFIED events
     for ev in notify_items:
-        append_notified_event(ev)
+        try:
+            append_notified_event(ev)
+            print(f"NOTIFIED\t{ev.get('threadId')}")
+        except Exception as e:
+            print(f"NOTIFY_FAIL\t{e}", file=sys.stderr)
 
-    print(f"NOTIFIED_APPENDED\t{len(notify_items)}")
+    print(f"DONE\tspawned={spawned}\tnotified={len(notify_items)}")
     return 0
 
 
