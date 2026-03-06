@@ -47,3 +47,29 @@
 ## Kokkuvõte
 
 Süsteemi tugevus on **hästi mõeldud agent-rollide eristus ja event-logi põhine töövoog**. Peamine nõrkus on **koodi ja promptide vaheline drift ning liiga pehme andmelepingu enforcement**. Kui tood schema/transition validatsiooni ja orkestreerimise reeglid rohkem koodi sisse, saad süsteemi kiiresti oluliselt töökindlamaks ja kergemini hooldatavaks.
+
+## 06.03.2026 best-practice täiendus (rakendatud selles muudatuses)
+
+### Rakendatud nüüd
+- **Range andmelepingu enforcement kirjutuspunktis (`append_ledger.py`)**
+  - kohustuslikud väljad, pikkused, tüübid, kontrollmärkide (`\t`, `\n`, `\r`) blokk,
+  - `event == status` reegel,
+  - `docsLinks` ja skooride range valideerimine.
+- **State-transition guardrail**
+  - lubatud üleminekud on centraliseeritud (`None->NEW`, `NEW->TRIAGED|SKIPPED|FAILED`, jne),
+  - ebaseaduslikud hüpped lükatakse tagasi.
+- **Idempotentsus + konfliktikaitse**
+  - `idempotencyKey` standard (`threadId::messageId::status`) lisatakse vaikimisi,
+  - sama võtmega sama payload => `IDEMPOTENT_OK`,
+  - sama võtmega erinev payload => reject.
+- **Concurrency safety (file lock + fsync)**
+  - append toimub eksklusiivse locki all,
+  - kirjutus flush + fsync, et vähendada osalise kirjutuse riski.
+- **Ingest kirjutab ainult läbi validatori**
+  - `ingest_unread.py` ei kirjuta enam ledgerit otse,
+  - iga `NEW` event läheb läbi `append_ledger.py`.
+
+### Järgmine soovituslik samm (mitte veel tehtud)
+1. Lisa eraldi `state/tests/` unit-testid üleminekute/idempotentsuse jaoks.
+2. Ekspordi lihtne KPI snapshot (`queue depth`, `stage latency`, `failed by stage`) nt JSON failina.
+3. Asenda vabad tekstikäsud agentidele järk-järgult template-põhiste task payloadidega.
