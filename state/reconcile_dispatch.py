@@ -6,46 +6,16 @@ import subprocess
 import sys
 import time
 
+_DIR = os.path.dirname(os.path.abspath(__file__))
+if _DIR not in sys.path:
+    sys.path.insert(0, _DIR)
+
+from agent_utils import spawn_agent  # noqa: E402
+
 SCRIPT_DIR = os.path.dirname(__file__)
 APPEND_LEDGER = os.path.join(SCRIPT_DIR, "append_ledger.py")
 NOTIFY_SCRIPT = os.path.join(SCRIPT_DIR, "slack_notify.py")
 LEDGER = os.environ.get("OPENCLAW_LEDGER_PATH", "/data/.openclaw/state/ledger.jsonl")
-
-
-def spawn_agent(agent_id, task_message):
-    """Käivita openclaw agent päriselt."""
-    cmd = [
-        "openclaw", "agent",
-        "--agent", agent_id,
-        "--message", task_message,
-        "--timeout", "300",
-    ]
-    print(f"SPAWN\t{agent_id}\t{task_message[:80]}...")
-    try:
-        result = subprocess.run(
-            cmd, text=True, capture_output=True, timeout=320,
-            env={**os.environ, "PATH": "/usr/local/bin:/usr/bin:/bin:" + os.environ.get("PATH", "")},
-        )
-        if result.returncode == 0:
-            print(f"SPAWN_OK\t{agent_id}")
-            if result.stdout:
-                print(result.stdout.strip())
-            return True
-        else:
-            err = (result.stderr or result.stdout or "").strip()
-            print(f"SPAWN_FAIL\t{agent_id}\t{err[:200]}", file=sys.stderr)
-            try:
-                subprocess.run(
-                    [sys.executable, NOTIFY_SCRIPT, "--error",
-                     f"{agent_id} spawn ebaõnnestus: {err[:200]}"],
-                    timeout=15, capture_output=True,
-                )
-            except Exception:
-                pass
-            return False
-    except subprocess.TimeoutExpired:
-        print(f"SPAWN_TIMEOUT\t{agent_id}", file=sys.stderr)
-        return False
 
 
 def load_events():
@@ -152,7 +122,7 @@ def main():
                     f"Loe e-kirja täiskeha ja kirjuta Delfi Ärilehe stiilis uudislugu. "
                     f"Kirjuta DRAFTED ledger event koos docsLinks."
                 )
-                if spawn_agent("kirjutaja", task):
+                if spawn_agent("kirjutaja", task, notify_script=NOTIFY_SCRIPT):
                     spawned += 1
                 time.sleep(5)
 
@@ -165,7 +135,7 @@ def main():
                     f"Toimeta lugu threadId={tid} docsLink={dl[0]}. "
                     f"Kirjuta EDITED ledger event koos docsLinks."
                 )
-                if spawn_agent("toimetaja", task):
+                if spawn_agent("toimetaja", task, notify_script=NOTIFY_SCRIPT):
                     spawned += 1
                 time.sleep(5)
 
