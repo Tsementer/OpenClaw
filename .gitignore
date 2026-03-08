@@ -19,3 +19,10 @@ Thumbs.db
 **/.openclaw/
 state/ledger.jsonl
 openclaw.json
+
+# Python
+__pycache__/
+**/__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
